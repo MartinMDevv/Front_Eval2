@@ -1,0 +1,71 @@
+# ============================================================
+# docker-compose.yml — Frontend (Flask)
+# ============================================================
+# Define UN contenedor: la app Flask que consume el Backend
+# por HTTP en BACKEND_URL.
+#
+# Funciona en LOCAL y en producción (EC2):
+#   • Local: docker compose up -d --build
+#            (BACKEND_URL apunta a tu PC vía host.docker.internal)
+#   • EC2 :  docker compose pull && up -d
+#            (BACKEND_URL apunta a la IP privada de la EC2 Backend)
+# ============================================================
+
+services:
+
+  # ──────────────────────────────────────────────────────────
+  # SERVICIO: Frontend Flask
+  # ──────────────────────────────────────────────────────────
+  frontend:
+    # Doble configuración (image + build) → funciona para local y CI/CD:
+    #   • LOCAL  : Compose ejecuta "build:" y etiqueta con el nombre de "image:"
+    #   • CI/CD  : Compose descarga la imagen desde Docker Hub
+    image: ${DOCKERHUB_USERNAME:-local}/devops-frontend:${IMAGE_TAG:-latest}
+    build:
+      context: .                      # Carpeta donde está el Dockerfile
+      dockerfile: Dockerfile
+
+    container_name: devops_frontend
+    restart: unless-stopped
+
+    environment:
+      # Puerto del servidor Flask
+      PORT: 5000
+      # En producción, DEBUG debe ser False (no mostrar stack traces al usuario)
+      DEBUG: "False"
+
+      # ⚠️ URL del Backend — la variable más importante
+      # • Local           : http://host.docker.internal:3000
+      #                     (gracias a "extra_hosts" abajo, este nombre
+      #                     resuelve a la IP del HOST, no del contenedor)
+      # • Producción (EC2): http://IP_PRIVADA_BACKEND:3000
+      BACKEND_URL: ${BACKEND_URL:-http://host.docker.internal:3000}
+
+      # Clave para firmar cookies de sesión de Flask
+      # En producción debe ser un valor largo y aleatorio
+      SECRET_KEY: ${SECRET_KEY:-dev_secret_cambiar_en_prod}
+
+    # ✨ Truco para alcanzar el HOST desde dentro del contenedor (Linux):
+    # En Docker Desktop (Mac/Windows) "host.docker.internal" funciona solo.
+    # En Linux hay que agregarlo manualmente apuntando a "host-gateway".
+    # Sin esto, "BACKEND_URL=http://host.docker.internal:3000" no resolvería.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # Publicar puerto 5000 al host (navegador → http://localhost:5000)
+    ports:
+      - "5000:5000"
+
+    networks:
+      - frontend_network
+
+
+# ──────────────────────────────────────────────────────────
+# REDES
+# ──────────────────────────────────────────────────────────
+# Red bridge propia para aislar este contenedor.
+# El frontend NO comparte red con el backend (están en composes separados);
+# se comunican por HTTP a través del host (local) o por IP de EC2 (prod).
+networks:
+  frontend_network:
+    driver: bridge

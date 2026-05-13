@@ -1,0 +1,65 @@
+# ============================================================
+# .gitignore — archivos que Git NO debe rastrear ni subir
+# ============================================================
+
+
+# ─── Python: bytecode y cachés ──────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+
+# ─── Virtual environments ───────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+
+
+# ─── Variables de entorno (¡SECRETOS!) ──────────────────────
+# Contienen contraseñas y SECRET_KEY reales — NUNCA subir
+.env
+.env.local
+.env.*.local
+# Excepción: el .env.example SÍ debe ir al repo (es la plantilla)
+
+
+# ─── Distribución / build ───────────────────────────────────
+build/
+dist/
+*.egg-info/
+*.egg
+
+
+# ─── Tests y cobertura ──────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+
+# ─── Logs ───────────────────────────────────────────────────
+*.log
+logs/
+
+
+# ─── Editor / IDE ───────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+
+# ─── Sistema operativo ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+
+# ─── Flask específico ───────────────────────────────────────
+instance/
+.webassets-cache

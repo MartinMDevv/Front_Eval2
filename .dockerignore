@@ -1,0 +1,64 @@
+# ============================================================
+# .dockerignore — archivos que Docker IGNORA al construir
+# ============================================================
+# Hace la imagen más pequeña, segura y rápida.
+# NOTA: NO incluir "static/" aquí — no existe en este repo
+#       (los HTML usan Bootstrap por CDN, no archivos locales).
+# ============================================================
+
+# ─── Cachés y bytecode de Python ────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# ─── Virtual environments ───────────────────────────────────
+# Se reinstalan dentro del contenedor; no tiene sentido copiarlos
+venv/
+.venv/
+env/
+ENV/
+
+# ─── Variables de entorno (¡secretos!) ──────────────────────
+.env
+.env.*
+# Excepción: el .env.example sí puede ir
+!.env.example
+
+# ─── Control de versiones ───────────────────────────────────
+.git
+.gitignore
+.gitattributes
+
+# ─── Documentación (no se necesita en runtime) ──────────────
+*.md
+docs/
+
+# ─── Tests y cobertura ──────────────────────────────────────
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ─── Editor / IDE ───────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── Archivos del sistema operativo ─────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Logs locales ───────────────────────────────────────────
+*.log
+logs/
+
+# ─── Archivos Docker (auto-referencia innecesaria) ──────────
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# ─── CI/CD (no se necesita dentro del contenedor) ───────────
+.github/
