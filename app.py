@@ -17,6 +17,8 @@ CORS(app)
 
 # Configuración de la URL del backend API
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:3000')
+# Exponer en app.config para que el template lo lea via {{ config.BACKEND_URL }}
+app.config['BACKEND_URL'] = BACKEND_URL
 
 # Ruta principal - muestra la página de inicio
 @app.route('/')
